@@ -1,219 +1,213 @@
-import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Header from "./Headers/Header";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { IoMdHome } from "react-icons/io";
-import { AiFillLike } from "react-icons/ai";
-import { FaHistory } from "react-icons/fa";
-import { FaVideo } from "react-icons/fa6";
-import { FaUserCheck } from "react-icons/fa";
+import { 
+  FiHome, 
+  FiHeart, 
+  FiClock, 
+  FiVideo, 
+  FiUsers, 
+  FiTrendingUp,
+  FiMusic,
+  FiGamepad2,
+  FiSettings,
+  FiHelpCircle,
+  FiChevronLeft,
+  FiChevronRight
+} from "react-icons/fi";
 
-const drawerWidth = 240;
-
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: "hidden",
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: "hidden",
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
-  ...(open && {
-    ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
-  }),
-  ...(!open && {
-    ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
-  }),
-}));
-
-// eslint-disable-next-line react/prop-types
-export default function MiniDrawer({children}) {
+const MiniDrawer = ({ children }) => {
   const authStatus = useSelector((state) => state.auth.status);
-  
-  const [open, setOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
-
-
-
-  const sideList = [
+  const sidebarItems = [
     {
       name: "Home",
-      icon: <IoMdHome className="text-white" fontSize={"1.5rem"} />,
+      icon: FiHome,
       slug: "/",
-      active: authStatus,
+      active: true,
+      category: "main"
     },
-
     {
-      name: "Liked videos",
-      icon: <AiFillLike className="text-white" fontSize={"1.5rem"} />,
+      name: "Trending",
+      icon: FiTrendingUp,
+      slug: "/trending",
+      active: true,
+      category: "main"
+    },
+    {
+      name: "Music",
+      icon: FiMusic,
+      slug: "/music",
+      active: true,
+      category: "main"
+    },
+    {
+      name: "Gaming",
+      icon: FiGamepad2,
+      slug: "/gaming",
+      active: true,
+      category: "main"
+    },
+    {
+      name: "Liked Videos",
+      icon: FiHeart,
       slug: "/liked-videos",
       active: authStatus,
+      category: "library"
     },
     {
       name: "History",
-      icon: <FaHistory className="text-white" fontSize={"1.5rem"} />,
+      icon: FiClock,
       slug: "/history",
       active: authStatus,
+      category: "library"
     },
-
-    // {
-    //   name: "Collection",
-    //   icon: <BsCollectionPlay className="text-white" />,
-    //   slug: "/collection",
-    //   active: authStatus,
-    // },
-
     {
-      name: "MyContent",
-      icon: <FaVideo className="text-white" fontSize={"1.5rem"} />,
+      name: "My Content",
+      icon: FiVideo,
       slug: "/content",
       active: authStatus,
+      category: "library"
     },
     {
       name: "Subscribers",
-      icon: <FaUserCheck className="text-white" fontSize={"1.5rem"} />,
+      icon: FiUsers,
       slug: "/subscribers",
       active: authStatus,
+      category: "library"
     },
+    {
+      name: "Settings",
+      icon: FiSettings,
+      slug: "/settings",
+      active: authStatus,
+      category: "other"
+    },
+    {
+      name: "Help",
+      icon: FiHelpCircle,
+      slug: "/help",
+      active: true,
+      category: "other"
+    }
   ];
-  return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar position="fixed" sx={{ backgroundColor: "#282828", boxShadow: "none" }}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={() => setOpen(!open)}
-            edge="start"
-          >
-            <MenuIcon />
-          </IconButton>
 
-          <Header />
-        </Toolbar>
-      </AppBar>
+  const mainItems = sidebarItems.filter(item => item.category === "main" && item.active);
+  const libraryItems = sidebarItems.filter(item => item.category === "library" && item.active);
+  const otherItems = sidebarItems.filter(item => item.category === "other" && item.active);
 
-      <div></div>
-      <Drawer
-        variant="permanent"
-        open={open}
-        PaperProps={{
-          sx: { backgroundColor: "#282828", boxShadow: "none", pt: 3 },
-        }}
+  const SidebarItem = ({ item }) => {
+    const isActive = location.pathname === item.slug;
+    const Icon = item.icon;
+
+    return (
+      <Link
+        to={item.slug}
+        className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 group
+                   ${isActive 
+                     ? 'bg-primary/20 text-primary border-r-2 border-primary' 
+                     : 'text-gray-300 hover:bg-gray-800/50 hover:text-text'
+                   }`}
       >
-        <DrawerHeader>
-      
-         
-        </DrawerHeader>
-        <Divider />
-        <List>
-          {sideList.map((text,) =>
-            text.active ? (
-              <Link to={text.slug} key={text.name}>
-                <ListItem
-                  disablePadding
-                  sx={{ display: "block" }}
-                >
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {/* {index % 2 === 0 ? text.icon: <MailIcon />} */}
+        <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-primary' : 'group-hover:text-text'}`} />
+        <span className={`font-medium transition-all duration-200 ${
+          isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 lg:opacity-100 lg:translate-x-0'
+        }`}>
+          {item.name}
+        </span>
+      </Link>
+    );
+  };
 
-                      {text.icon}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={text.name}
-                      sx={{ opacity: open ? 1 : 0, color: "white" }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </Link>
-            ) : null
-          )}
-        </List>
-        <Divider />
-      
-      </Drawer>
-
-      <Box component="main" sx={{ flexGrow: 1 }}>
-        {/* <DrawerHeader /> */}
-        {children}
-      </Box>
-    </Box>
+  const SidebarSection = ({ title, items }) => (
+    <div className="space-y-1">
+      {title && (
+        <h3 className={`px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider
+                       ${isOpen ? 'opacity-100' : 'opacity-0 lg:opacity-100'}`}>
+          {title}
+        </h3>
+      )}
+      {items.map((item) => (
+        <SidebarItem key={item.name} item={item} />
+      ))}
+    </div>
   );
-}
+
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <aside className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-gray-900/95 backdrop-blur-md 
+                        border-r border-gray-800/50 transition-all duration-300 z-40
+                        ${isOpen ? 'w-64' : 'w-16 lg:w-64'}`}>
+        
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="absolute -right-3 top-6 bg-gray-800 hover:bg-gray-700 rounded-full p-1.5 
+                   border border-gray-700 transition-colors duration-200 lg:hidden"
+        >
+          {isOpen ? (
+            <FiChevronLeft className="w-4 h-4 text-text" />
+          ) : (
+            <FiChevronRight className="w-4 h-4 text-text" />
+          )}
+        </button>
+
+        {/* Sidebar Content */}
+        <div className="flex flex-col h-full py-6 overflow-y-auto">
+          <div className="space-y-6">
+            {/* Main Navigation */}
+            <SidebarSection items={mainItems} />
+
+            {/* Library Section */}
+            {libraryItems.length > 0 && (
+              <>
+                <div className="border-t border-gray-800/50 mx-4"></div>
+                <SidebarSection title="Library" items={libraryItems} />
+              </>
+            )}
+
+            {/* Other Section */}
+            {otherItems.length > 0 && (
+              <>
+                <div className="border-t border-gray-800/50 mx-4"></div>
+                <SidebarSection items={otherItems} />
+              </>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="mt-auto px-4 py-4 border-t border-gray-800/50">
+            <div className={`text-xs text-gray-500 transition-all duration-200 ${
+              isOpen ? 'opacity-100' : 'opacity-0 lg:opacity-100'
+            }`}>
+              <p>&copy; 2024 YouTube Clone</p>
+              <p className="mt-1">Made with ❤️</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Main Content */}
+      <main className={`flex-1 transition-all duration-300 ${
+        isOpen ? 'ml-16 lg:ml-64' : 'ml-16 lg:ml-64'
+      }`}>
+        <div className="min-h-full">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default MiniDrawer;
