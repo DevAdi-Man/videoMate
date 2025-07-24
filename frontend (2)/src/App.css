@@ -1,0 +1,82 @@
+HTML,body{
+background-color: rgb(23, 23, 23);
+overflow-x: hidden;
+}
+
+.bgDark{
+    background-color: #282828;
+}
+
+
+h1,h2,h3,h4,h5,h6{
+    color: white;
+}
+
+label{
+    color: white;
+}
+
+p {
+    color: white;
+}
+
+/* .card{
+    width: 70%;
+    border-radius:30px ;
+    height: 70%;
+    -webkit-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+-moz-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+} */
+
+
+.auth-img>img{
+    width: 80%;
+
+}
+
+
+
+.grid-two-col{
+    display: grid;
+    grid-template-columns:16rem 1fr;
+    /* height: 100vh; */
+}
+
+/* .video-card{
+     border: 1px solid rgb(187, 149, 149); 
+    height:21rem; 
+} */
+.thumb-img{
+    width: 100%;
+    height: 15rem;
+    object-fit: cover;
+}
+
+/* -----------video details-------- */
+
+.brown{
+    border: 1px solid brown;
+
+}
+
+.yellow{
+    border: 1px solid yellow ;
+    height: 5rem;
+}
+
+.related-videos{
+    border: 1px solid orange;
+}
+
+.grid-two-col-video{
+    display: grid;
+    grid-template-columns: 1fr 30rem;
+    height: 100vh;
+}
+
+.subs-btn{
+    border: 1px solid white;
+    
+     
+}
