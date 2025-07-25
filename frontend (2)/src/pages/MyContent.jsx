@@ -76,7 +76,7 @@ const MyContent = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background w-full">
+    <div className="min-h-screen bg-background w-full content-container">
       {/* Channel Header */}
       <div className="relative w-full">
         {/* Cover Image */}

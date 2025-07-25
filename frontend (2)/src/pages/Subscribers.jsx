@@ -69,7 +69,7 @@ const Subscribers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background content-container">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-gray-800/50">
         <div className="max-w-7xl mx-auto px-4 py-8">

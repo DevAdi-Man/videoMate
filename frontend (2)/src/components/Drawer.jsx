@@ -199,10 +199,10 @@ const MiniDrawer = ({ children }) => {
       )}
 
       {/* Main Content */}
-      <main className={`flex-1 transition-all duration-300 ${
+      <main className={`transition-all duration-300 ${
         isOpen ? 'ml-16 lg:ml-64' : 'ml-16 lg:ml-64'
       }`}>
-        <div className="min-h-full">
+        <div className="w-full">
           {children}
         </div>
       </main>
