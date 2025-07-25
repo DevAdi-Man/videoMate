@@ -24,6 +24,8 @@ const Home = () => {
       },
       views: vid.video.stats?.views,
       isExternal: true,
+      videoId: vid.video.videoId, // Store original YouTube video ID
+      createdAt: vid.video.publishedTimeText,
     }));
 
   const allVideos = [...(backendVideos?.docs || []), ...rapidAdapted];

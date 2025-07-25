@@ -1,11 +1,14 @@
 import { Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
-import { FiPlay, FiClock, FiEye } from "react-icons/fi";
+import { FiPlay, FiClock, FiEye, FiExternalLink } from "react-icons/fi";
 import { useState } from "react";
 
-const VideoCard = ({ views, _id, title, thumbnail, owner, duration, createdAt }) => {
+const VideoCard = ({ views, _id, title, thumbnail, owner, duration, createdAt, isExternal }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Check if this is an external video
+  const isExternalVideo = isExternal || _id?.startsWith('yt-');
 
   // Format views count
   const formatViews = (count) => {
@@ -67,9 +70,21 @@ const VideoCard = ({ views, _id, title, thumbnail, owner, duration, createdAt })
           <div className={`absolute inset-0 bg-black/20 flex items-center justify-center
                           transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
             <div className="bg-white/90 rounded-full p-3 transform transition-transform duration-300 hover:scale-110">
-              <FiPlay className="w-6 h-6 text-black ml-1" />
+              {isExternalVideo ? (
+                <FiExternalLink className="w-6 h-6 text-black" />
+              ) : (
+                <FiPlay className="w-6 h-6 text-black ml-1" />
+              )}
             </div>
           </div>
+          
+          {/* External video badge */}
+          {isExternalVideo && (
+            <div className="absolute top-2 left-2 bg-red-500/90 text-white text-xs px-2 py-1 rounded-md flex items-center gap-1">
+              <FiExternalLink className="w-3 h-3" />
+              YouTube
+            </div>
+          )}
           
           {/* Duration badge */}
           {duration && (

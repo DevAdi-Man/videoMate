@@ -30,6 +30,61 @@ const Videos = () => {
 
   if (isLoading) return <Loader text="Loading video..." />;
 
+  // Check if this is an external video (from Rapid API)
+  const isExternalVideo = slug?.startsWith('yt-');
+  
+  // If external video, show message and redirect to YouTube
+  if (isExternalVideo) {
+    const videoId = slug?.replace('yt-', '');
+    const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800/50">
+            <div className="w-24 h-24 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center">
+              <FiPlay className="w-12 h-12 text-red-400" />
+            </div>
+            
+            <h2 className="text-2xl font-bold text-text mb-4">
+              External Video Content
+            </h2>
+            
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              This video is from YouTube's trending content. To watch this video, 
+              you'll be redirected to YouTube where you can enjoy the full experience.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href={youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2"
+              >
+                <FiPlay className="w-5 h-5" />
+                Watch on YouTube
+              </a>
+              
+              <Link
+                to="/"
+                className="btn-secondary px-6 py-3 rounded-lg font-medium"
+              >
+                Back to Home
+              </Link>
+            </div>
+            
+            <div className="mt-6 p-4 bg-gray-800/30 rounded-lg">
+              <p className="text-sm text-gray-500">
+                💡 <strong>Tip:</strong> Upload your own videos to watch them directly on our platform!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const formatViews = (count) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
