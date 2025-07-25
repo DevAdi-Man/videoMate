@@ -34,14 +34,22 @@ const Videos = () => {
   );
   const { mutate: Like, isPending: likePending } = likeToggleQuery(video?._id);
 
-  // Enhanced like handler with toast
+  // Enhanced like handler with toast (single toast only)
   const handleLike = () => {
+    const wasLiked = video?.isLiked;
     Like();
-    showToast(
-      video?.isLiked ? 'Removed from liked videos' : 'Added to liked videos',
-      'like',
-      { icon: <FiThumbsUp className="w-5 h-5" /> }
-    );
+    
+    // Show toast only once with appropriate message
+    setTimeout(() => {
+      showToast(
+        wasLiked ? 'Removed from liked videos' : 'Added to liked videos',
+        'like',
+        { 
+          icon: <FiThumbsUp className="w-5 h-5" />,
+          duration: 2000 
+        }
+      );
+    }, 100); // Small delay to ensure state update
   };
 
   // Enhanced share handler
@@ -327,7 +335,7 @@ const Videos = () => {
 
           {/* Sidebar - Recommended Videos */}
           <div className="space-y-6">
-            <div className="sticky top-24">
+            <div className="sticky">
               <h2 className="text-xl font-semibold text-text mb-6 flex items-center gap-2">
                 <FiPlay className="w-5 h-5 text-primary" />
                 Up Next

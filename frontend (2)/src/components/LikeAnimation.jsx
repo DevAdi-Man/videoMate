@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiHeart, FiThumbsUp } from 'react-icons/fi';
+import { AiFillHeart, AiOutlineHeart, AiFillLike, AiOutlineLike } from 'react-icons/ai';
 
 const LikeAnimation = ({ isLiked, onClick, count, type = 'thumbs' }) => {
   const [showAnimation, setShowAnimation] = useState(false);
@@ -30,7 +31,16 @@ const LikeAnimation = ({ isLiked, onClick, count, type = 'thumbs' }) => {
     }
   };
 
-  const Icon = type === 'heart' ? FiHeart : FiThumbsUp;
+  // Use filled/unfilled icons based on state
+  const getIcon = () => {
+    if (type === 'heart') {
+      return isLiked ? AiFillHeart : AiOutlineHeart;
+    } else {
+      return isLiked ? AiFillLike : AiOutlineLike;
+    }
+  };
+
+  const Icon = getIcon();
 
   return (
     <>
@@ -50,8 +60,8 @@ const LikeAnimation = ({ isLiked, onClick, count, type = 'thumbs' }) => {
         {/* Icon with animation */}
         <Icon 
           className={`w-5 h-5 relative z-10 transition-all duration-300 ${
-            isLiked ? 'scale-110 animate-bounce' : ''
-          } ${showAnimation ? 'animate-pulse' : ''}`} 
+            isLiked ? 'scale-110 text-white' : ''
+          } ${showAnimation ? 'animate-bounce' : ''}`} 
         />
         
         {/* Count with animation */}

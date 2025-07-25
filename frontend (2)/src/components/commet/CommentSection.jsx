@@ -11,9 +11,9 @@ import {
   FiHeart,
   FiUser,
   FiClock,
-  FiPin,
   FiFlag
 } from "react-icons/fi";
+import { AiFillLike, AiOutlineLike, AiFillDislike, AiOutlineDislike } from "react-icons/ai";
 import { Button } from "../index.js";
 import createCommentQuery from "../../hooks/react-query/mutation/comment/createCommentQuery.jsx";
 import deleteCommentQuery from "../../hooks/react-query/mutation/comment/deleteCommentQuery.jsx";
@@ -305,7 +305,11 @@ const CommentSection = ({ slug }) => {
                               : 'hover:bg-gray-800/50 text-gray-400 hover:text-text'
                           }`}
                         >
-                          <FiThumbsUp className="w-4 h-4" />
+                          {likedComments.has(comment._id) ? (
+                            <AiFillLike className="w-4 h-4" />
+                          ) : (
+                            <AiOutlineLike className="w-4 h-4" />
+                          )}
                           <span>{(comment.likeCount || 0) + (likedComments.has(comment._id) ? 1 : 0)}</span>
                         </button>
 
@@ -318,7 +322,11 @@ const CommentSection = ({ slug }) => {
                               : 'hover:bg-gray-800/50 text-gray-400 hover:text-text'
                           }`}
                         >
-                          <FiThumbsDown className="w-4 h-4" />
+                          {dislikedComments.has(comment._id) ? (
+                            <AiFillDislike className="w-4 h-4" />
+                          ) : (
+                            <AiOutlineDislike className="w-4 h-4" />
+                          )}
                         </button>
 
                         {/* Reply Button */}
