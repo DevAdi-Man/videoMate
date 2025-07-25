@@ -91,7 +91,7 @@ const MyContent = () => {
         </div>
 
         {/* Channel Info */}
-        <div className="max-w-7xl mx-auto px-4 -mt-12 sm:-mt-16 relative z-10">
+        <div className="w-full mx-auto px-4 -mt-12 sm:-mt-16 relative z-10">
           <div className="flex flex-col md:flex-row items-start md:items-end gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-background overflow-hidden bg-gray-800 flex-shrink-0">
               <img 
@@ -132,7 +132,7 @@ const MyContent = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+      <div className="w-full mx-auto px-4 py-6 sm:py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {stats.map((stat) => {
@@ -201,9 +201,9 @@ const MyContent = () => {
 
         {/* Content */}
         {selectedTab === 'videos' && (
-          <div>
+          <div className="w-full">
             {videos.length > 0 ? (
-              <div className={`${
+              <div className={`w-full ${
                 viewMode === 'grid' 
                   ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
                   : 'space-y-4'
@@ -246,20 +246,20 @@ const MyContent = () => {
         )}
 
         {selectedTab === 'analytics' && (
-          <div className="w-full max-w-full">
+          <div className="w-full">
             {/* Top Performing Videos */}
-            <div className="card mb-6">
+            <div className="card mb-6 w-full">
               <h3 className="text-xl font-semibold text-text mb-6 flex items-center gap-2">
                 <FiTrendingUp className="w-5 h-5 text-primary" />
                 Top Performing Videos
               </h3>
               {videos.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-4 w-full">
                   {videos
                     .sort((a, b) => (b.views || 0) - (a.views || 0))
                     .slice(0, 5)
                     .map((video, index) => (
-                      <div key={video._id} className="flex items-center gap-4 p-4 bg-gray-800/30 rounded-lg hover:bg-gray-800/50 transition-colors">
+                      <div key={video._id} className="flex items-center gap-4 p-4 bg-gray-800/30 rounded-lg hover:bg-gray-800/50 transition-colors w-full">
                         <span className="text-xl font-bold text-primary min-w-[32px] flex-shrink-0">#{index + 1}</span>
                         <div className="w-20 h-14 bg-gray-700 rounded overflow-hidden flex-shrink-0">
                           <img 
@@ -297,8 +297,8 @@ const MyContent = () => {
             </div>
 
             {/* Performance Insights */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              <div className="card">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 w-full">
+              <div className="card w-full">
                 <h4 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
                   <FiEye className="w-5 h-5 text-blue-400" />
                   View Performance
@@ -319,7 +319,7 @@ const MyContent = () => {
                 </div>
               </div>
 
-              <div className="card">
+              <div className="card w-full">
                 <h4 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
                   <FiHeart className="w-5 h-5 text-red-400" />
                   Engagement
@@ -342,7 +342,7 @@ const MyContent = () => {
             </div>
 
             {/* Coming Soon Section */}
-            <div className="card text-center py-16">
+            <div className="card text-center py-16 w-full">
               <FiTrendingUp className="w-16 h-16 mx-auto mb-4 text-gray-400" />
               <h3 className="text-xl font-semibold text-text mb-2">Advanced Analytics Coming Soon</h3>
               <p className="text-gray-400 max-w-md mx-auto">
