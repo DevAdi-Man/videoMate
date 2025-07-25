@@ -76,11 +76,11 @@ const MyContent = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full">
       {/* Channel Header */}
-      <div className="relative">
+      <div className="relative w-full">
         {/* Cover Image */}
-        <div className="h-48 md:h-64 bg-gradient-to-r from-primary/20 to-accent/20 relative overflow-hidden">
+        <div className="h-48 md:h-64 bg-gradient-to-r from-primary/20 to-accent/20 relative overflow-hidden w-full">
           <img 
             src={getSafeImageUrl(channel?.coverImage, getPlaceholderImage(800, 400))} 
             alt="Cover" 
@@ -246,9 +246,9 @@ const MyContent = () => {
         )}
 
         {selectedTab === 'analytics' && (
-          <div className="w-full space-y-6">
+          <div className="w-full max-w-full">
             {/* Top Performing Videos */}
-            <div className="card">
+            <div className="card mb-6">
               <h3 className="text-xl font-semibold text-text mb-6 flex items-center gap-2">
                 <FiTrendingUp className="w-5 h-5 text-primary" />
                 Top Performing Videos
@@ -260,7 +260,7 @@ const MyContent = () => {
                     .slice(0, 5)
                     .map((video, index) => (
                       <div key={video._id} className="flex items-center gap-4 p-4 bg-gray-800/30 rounded-lg hover:bg-gray-800/50 transition-colors">
-                        <span className="text-xl font-bold text-primary min-w-[32px]">#{index + 1}</span>
+                        <span className="text-xl font-bold text-primary min-w-[32px] flex-shrink-0">#{index + 1}</span>
                         <div className="w-20 h-14 bg-gray-700 rounded overflow-hidden flex-shrink-0">
                           <img 
                             src={getSafeImageUrl(video.thumbnail, getPlaceholderImage(160, 90))} 
@@ -270,7 +270,7 @@ const MyContent = () => {
                           />
                         </div>
                         
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 overflow-hidden">
                           <h4 className="font-medium text-text line-clamp-2 mb-2">
                             {video.title}
                           </h4>
@@ -297,7 +297,7 @@ const MyContent = () => {
             </div>
 
             {/* Performance Insights */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               <div className="card">
                 <h4 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
                   <FiEye className="w-5 h-5 text-blue-400" />
