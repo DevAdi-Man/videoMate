@@ -120,7 +120,7 @@ const VideoCard = ({ views, _id, title, thumbnail, owner, duration, createdAt, i
               }
             }}
           />
-          />
+          
         </Link>
 
         {/* Video Details */}

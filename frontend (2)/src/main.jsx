@@ -25,6 +25,7 @@ import AuthLayOut from "./components/AuthLayOut.jsx";
 import LikedVideo from "./pages/LikedVideo.jsx";
 import VideoHistory from "./pages/VideoHistory.jsx";
 import {  AddVideoOnPlaylsits } from "./components/index.js";
+import NotFound from "./pages/NotFound.jsx";
 
 
 const router = createBrowserRouter([
@@ -128,6 +129,11 @@ const router = createBrowserRouter([
           </AuthLayOut>
         ),
       },
+      // Catch-all route for 404 - must be last
+      {
+        path: "*",
+        element: <NotFound />
+      }
     ],
   },
 ]);
