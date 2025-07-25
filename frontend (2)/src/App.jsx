@@ -40,8 +40,8 @@ function App() {
         {/* Header */}
         <Header />
         
-        {/* Main Content */}
-        <main className="flex-1 flex">
+        {/* Main Content with top padding for fixed header */}
+        <main className="flex-1 flex pt-16">
           <MiniDrawer>
             <div className="flex-1 min-h-0">
               {/* Content Area */}
