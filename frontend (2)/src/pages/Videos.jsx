@@ -47,12 +47,12 @@ const Videos = () => {
             </div>
             
             <h2 className="text-2xl font-bold text-text mb-4">
-              External Video Content
+              YouTube Trending Video
             </h2>
             
             <p className="text-gray-400 mb-6 leading-relaxed">
-              This video is from YouTube's trending content. To watch this video, 
-              you'll be redirected to YouTube where you can enjoy the full experience.
+              This is a trending video from YouTube. Click below to watch it on YouTube, 
+              or go back to explore videos uploaded by our community.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -74,10 +74,18 @@ const Videos = () => {
               </Link>
             </div>
             
-            <div className="mt-6 p-4 bg-gray-800/30 rounded-lg">
-              <p className="text-sm text-gray-500">
-                💡 <strong>Tip:</strong> Upload your own videos to watch them directly on our platform!
+            <div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <h3 className="text-blue-400 font-semibold mb-2">Want to watch videos directly?</h3>
+              <p className="text-sm text-gray-400 mb-3">
+                Upload your own videos to watch them directly on our platform with full functionality!
               </p>
+              <Link
+                to="/content"
+                className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-medium"
+              >
+                <FiPlay className="w-4 h-4" />
+                Upload Your Video
+              </Link>
             </div>
           </div>
         </div>

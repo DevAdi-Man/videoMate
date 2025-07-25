@@ -28,7 +28,39 @@ const Home = () => {
       createdAt: vid.video.publishedTimeText,
     }));
 
-  const allVideos = [...(backendVideos?.docs || []), ...rapidAdapted];
+  // Demo videos for testing (when no backend videos available)
+  const demoVideos = backendVideos?.docs?.length === 0 ? [
+    {
+      _id: 'demo-1',
+      title: 'Sample Video - Nature Documentary',
+      thumbnail: { url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=300&fit=crop' },
+      owner: {
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+        userName: 'NatureChannel',
+      },
+      views: 15420,
+      videoFile: { url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+      description: 'A beautiful nature documentary showcasing wildlife.',
+      createdAt: new Date().toISOString(),
+      isDemo: true,
+    },
+    {
+      _id: 'demo-2', 
+      title: 'Tech Tutorial - Web Development',
+      thumbnail: { url: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&h=300&fit=crop' },
+      owner: {
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+        userName: 'TechGuru',
+      },
+      views: 8930,
+      videoFile: { url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
+      description: 'Learn modern web development techniques.',
+      createdAt: new Date().toISOString(),
+      isDemo: true,
+    }
+  ] : [];
+
+  const allVideos = [...(backendVideos?.docs || []), ...demoVideos, ...rapidAdapted];
 
   const filteredVideos = filter === 'all' 
     ? allVideos 
