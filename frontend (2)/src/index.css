@@ -200,4 +200,33 @@
   .card {
     @apply bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300;
   }
+
+  /* Responsive fixes */
+  @media (max-width: 640px) {
+    .card {
+      @apply p-4;
+    }
+    
+    .btn {
+      @apply px-3 py-2 text-sm;
+    }
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  .overflow-x-auto {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Ensure proper touch targets on mobile */
+  @media (max-width: 768px) {
+    button, .btn {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
 }
