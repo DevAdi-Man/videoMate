@@ -9,24 +9,72 @@ import {
   FiPlay,
   FiEye,
   FiCalendar,
-  FiUser
+  FiUser,
+  FiFlag,
+  FiBookmark,
+  FiCopy
 } from "react-icons/fi";
 import { Button, CommentSection, Loader } from "../components";
 import videoQuery from "../hooks/react-query/query/videos/videoQuery.jsx";
 import toggleSubscribeQuery from "../hooks/react-query/mutation/subscribe/toggleSubscribeQuery.jsx";
 import likeToggleQuery from "../hooks/react-query/mutation/Like/likeToggleQuery.jsx";
 import { Avatar } from "@mui/material";
+import LikeAnimation from "../components/LikeAnimation.jsx";
+import { useToast } from "../components/Toast.jsx";
 
 const Videos = () => {
   const { slug } = useParams();
   const { data: video, isLoading } = videoQuery(slug);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const { showToast, ToastContainer } = useToast();
 
   const { mutate: subscribe, isPending: subscribePending } = toggleSubscribeQuery(
     video?.owner?._id,
     video?._id
   );
   const { mutate: Like, isPending: likePending } = likeToggleQuery(video?._id);
+
+  // Enhanced like handler with toast
+  const handleLike = () => {
+    Like();
+    showToast(
+      video?.isLiked ? 'Removed from liked videos' : 'Added to liked videos',
+      'like',
+      { icon: <FiThumbsUp className="w-5 h-5" /> }
+    );
+  };
+
+  // Enhanced share handler
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: video?.title,
+          text: video?.description,
+          url: window.location.href
+        });
+        showToast('Shared successfully!', 'share');
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        showToast('Link copied to clipboard!', 'share');
+      }
+    } catch (error) {
+      showToast('Failed to share', 'error');
+    }
+  };
+
+  // Enhanced download handler
+  const handleDownload = () => {
+    try {
+      const link = document.createElement('a');
+      link.href = video?.videoFile?.url;
+      link.download = video?.title || 'video';
+      link.click();
+      showToast('Download started!', 'download');
+    } catch (error) {
+      showToast('Download failed', 'error');
+    }
+  };
 
   if (isLoading) return <Loader text="Loading video..." />;
 
@@ -145,37 +193,76 @@ const Videos = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-y border-gray-800/50">
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => Like()}
-                    loading={likePending}
-                    variant="ghost"
-                    className="flex items-center gap-2 px-4 py-2"
-                  >
-                    <FiThumbsUp className="w-5 h-5" />
-                    <span>{formatViews(video?.likeCount)}</span>
-                  </Button>
+              <div className="flex flex-wrap items-center justify-between gap-4 py-6 border-y border-gray-800/50">
+                {/* Like/Dislike Section */}
+                <div className="flex items-center gap-1 bg-gray-900/50 rounded-full p-1">
+                  <LikeAnimation
+                    isLiked={video?.isLiked}
+                    onClick={handleLike}
+                    count={formatViews(video?.likeCount)}
+                    type="thumbs"
+                  />
                   
-                  <Button variant="ghost" className="flex items-center gap-2 px-4 py-2">
+                  <div className="w-px h-6 bg-gray-700"></div>
+                  
+                  <button className="flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition-all duration-300">
                     <FiThumbsDown className="w-5 h-5" />
-                  </Button>
+                  </button>
                 </div>
 
+                {/* Other Actions */}
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" className="flex items-center gap-2 px-4 py-2">
+                  {/* Share Button */}
+                  <button 
+                    onClick={handleShare}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-900/50 hover:bg-gray-800 rounded-full font-medium text-gray-300 hover:text-white transition-all duration-300 hover:scale-105"
+                  >
                     <FiShare2 className="w-5 h-5" />
                     <span className="hidden sm:inline">Share</span>
-                  </Button>
+                  </button>
                   
-                  <Button variant="ghost" className="flex items-center gap-2 px-4 py-2">
+                  {/* Download Button */}
+                  <button 
+                    onClick={handleDownload}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-900/50 hover:bg-gray-800 rounded-full font-medium text-gray-300 hover:text-white transition-all duration-300 hover:scale-105"
+                  >
                     <FiDownload className="w-5 h-5" />
                     <span className="hidden sm:inline">Download</span>
-                  </Button>
+                  </button>
                   
-                  <Button variant="ghost" className="p-2">
-                    <FiMoreHorizontal className="w-5 h-5" />
-                  </Button>
+                  {/* More Options */}
+                  <div className="relative group">
+                    <button className="p-2.5 bg-gray-900/50 hover:bg-gray-800 rounded-full text-gray-300 hover:text-white transition-all duration-300 hover:scale-105">
+                      <FiMoreHorizontal className="w-5 h-5" />
+                    </button>
+                    
+                    {/* Dropdown Menu */}
+                    <div className="absolute right-0 top-full mt-2 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-10 min-w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 animate-scale-in">
+                      <div className="py-2">
+                        <button 
+                          onClick={() => showToast('Video reported', 'info')}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-800 hover:text-text flex items-center gap-3 transition-colors duration-200"
+                        >
+                          <FiFlag className="w-4 h-4" />
+                          Report video
+                        </button>
+                        <button 
+                          onClick={() => showToast('Saved to Watch Later', 'success')}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-800 hover:text-text flex items-center gap-3 transition-colors duration-200"
+                        >
+                          <FiBookmark className="w-4 h-4" />
+                          Save to playlist
+                        </button>
+                        <button 
+                          onClick={handleShare}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-800 hover:text-text flex items-center gap-3 transition-colors duration-200"
+                        >
+                          <FiCopy className="w-4 h-4" />
+                          Copy link
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -279,6 +366,9 @@ const Videos = () => {
           </div>
         </div>
       </div>
+      
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 };
