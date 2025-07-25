@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { ChannelComponent, Loader, Modal, VideoCard } from "../components";
 import getChannelQuery from "../hooks/react-query/query/channel/getChannelQuery";
 import getMyVideoQuery from "../hooks/react-query/query/channel/getMyVideoQuery";
-import { getImageUrl, getFallbackAvatar, getPlaceholderImage, handleImageError } from "../utils/imageUtils";
+import { getImageUrl, getFallbackAvatar, getPlaceholderImage, handleImageError, getSafeImageUrl } from "../utils/imageUtils";
 import { 
   FiVideo, 
   FiPlus, 
@@ -81,20 +81,12 @@ const MyContent = () => {
       <div className="relative">
         {/* Cover Image */}
         <div className="h-48 md:h-64 bg-gradient-to-r from-primary/20 to-accent/20 relative overflow-hidden">
-          {channel?.coverImage ? (
-            <img 
-              src={getImageUrl(channel.coverImage)} 
-              alt="Cover" 
-              className="w-full h-full object-cover"
-              onError={(e) => handleImageError(e, getPlaceholderImage(800, 400))}
-            />
-          ) : (
-            <img 
-              src={getPlaceholderImage(800, 400)} 
-              alt="Default Cover" 
-              className="w-full h-full object-cover opacity-50"
-            />
-          )}
+          <img 
+            src={getSafeImageUrl(channel?.coverImage, getPlaceholderImage(800, 400))} 
+            alt="Cover" 
+            className="w-full h-full object-cover"
+            onError={(e) => handleImageError(e, getPlaceholderImage(800, 400))}
+          />
           <div className="absolute inset-0 bg-black/30"></div>
         </div>
 
@@ -103,7 +95,7 @@ const MyContent = () => {
           <div className="flex flex-col md:flex-row items-start md:items-end gap-6 mb-8">
             <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden bg-gray-800 flex-shrink-0">
               <img 
-                src={getImageUrl(userData.data?.avatar) || getFallbackAvatar(userData.data?.userName)} 
+                src={getSafeImageUrl(userData.data?.avatar, getFallbackAvatar(userData.data?.userName))} 
                 alt={userData.data?.userName}
                 className="w-full h-full object-cover"
                 onError={(e) => handleImageError(e, getFallbackAvatar(userData.data?.userName))}

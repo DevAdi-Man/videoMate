@@ -2,11 +2,23 @@
 
 /**
  * Get full image URL from backend response
- * @param {string} imageUrl - Image URL from backend
- * @returns {string} - Full image URL or fallback
+ * @param {string|object} imageUrl - Image URL from backend (can be string or object with url property)
+ * @returns {string|null} - Full image URL or null
  */
 export const getImageUrl = (imageUrl) => {
+  // Handle null, undefined, or empty values
   if (!imageUrl) return null;
+  
+  // If imageUrl is an object (like {url: "..."})
+  if (typeof imageUrl === 'object' && imageUrl.url) {
+    imageUrl = imageUrl.url;
+  }
+  
+  // Ensure imageUrl is a string
+  if (typeof imageUrl !== 'string') {
+    console.warn('Invalid imageUrl type:', typeof imageUrl, imageUrl);
+    return null;
+  }
   
   // If it's already a full URL (starts with http/https)
   if (imageUrl.startsWith('http')) {
@@ -19,14 +31,25 @@ export const getImageUrl = (imageUrl) => {
 };
 
 /**
+ * Get safe image URL with fallback
+ * @param {string|object} imageUrl - Image URL from backend
+ * @param {string} fallbackUrl - Fallback URL if main image fails
+ * @returns {string} - Safe image URL
+ */
+export const getSafeImageUrl = (imageUrl, fallbackUrl) => {
+  const safeUrl = getImageUrl(imageUrl);
+  return safeUrl || fallbackUrl || null;
+};
+
+/**
  * Get fallback avatar based on username
  * @param {string} userName - User's name
  * @returns {string} - Avatar URL from UI Avatars
  */
 export const getFallbackAvatar = (userName) => {
   const name = userName || 'User';
-  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=e092bc&color=ffffff&size=200&bold=true`;
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=e092bc&color=ffffff&size=200&bold=true&rounded=true`;
 };
 
 /**
@@ -45,6 +68,8 @@ export const getPlaceholderImage = (width = 800, height = 400) => {
  * @param {string} fallbackUrl - Fallback image URL
  */
 export const handleImageError = (event, fallbackUrl) => {
+  if (!event || !event.target) return;
+  
   if (fallbackUrl && event.target.src !== fallbackUrl) {
     event.target.src = fallbackUrl;
   } else {

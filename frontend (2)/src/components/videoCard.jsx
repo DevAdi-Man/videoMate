@@ -2,7 +2,7 @@ import { Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
 import { FiPlay, FiClock, FiEye, FiExternalLink } from "react-icons/fi";
 import { useState } from "react";
-import { getImageUrl, getFallbackAvatar, handleImageError } from "../utils/imageUtils";
+import { getImageUrl, getFallbackAvatar, handleImageError, getSafeImageUrl } from "../utils/imageUtils";
 
 const VideoCard = ({ views, _id, title, thumbnail, owner, duration, createdAt, isExternal }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -109,7 +109,7 @@ const VideoCard = ({ views, _id, title, thumbnail, owner, duration, createdAt, i
         >
           <Avatar
             alt={owner?.userName || "Channel"}
-            src={getImageUrl(owner?.avatar) || getFallbackAvatar(owner?.userName)}
+            src={getSafeImageUrl(owner?.avatar, getFallbackAvatar(owner?.userName))}
             sx={{ 
               width: 40, 
               height: 40,
