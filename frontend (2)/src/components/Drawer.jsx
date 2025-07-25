@@ -9,7 +9,7 @@ import {
   FiUsers, 
   FiTrendingUp,
   FiMusic,
-  FiGamepad2,
+  FiMonitor,
   FiSettings,
   FiHelpCircle,
   FiChevronLeft,
@@ -45,7 +45,7 @@ const MiniDrawer = ({ children }) => {
     },
     {
       name: "Gaming",
-      icon: FiGamepad2,
+      icon: FiMonitor,
       slug: "/gaming",
       active: true,
       category: "main"
