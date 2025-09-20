@@ -139,8 +139,7 @@ export class AuthService {
           "content-type": "application/json",
         },
         withCredentials: true,
-      });
-      // const channel = axios.get(` http://localhost:3000/api/v1/users/c/${userName}`, config);
+      }); 
       return channel;
     } catch (error) {
       console.log(error);
