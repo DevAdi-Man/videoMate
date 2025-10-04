@@ -217,7 +217,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   console.log(req.user);
   if (!req.user) {
-    return next(new ApiError(404, "user not found"));
+    throw new ApiError(404, "user not found");
   }
   return res
     .status(200)
