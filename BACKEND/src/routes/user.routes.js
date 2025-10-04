@@ -13,7 +13,8 @@ import {
   updateCoverImage,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middleware/multer.middleware.js";
-import { veryfyJwt } from "../middleware/verifyJwt.js";
+import { verifyJwt } from "../middleware/verifyJwt.js";
+
 
 const router = Router();
 
@@ -33,16 +34,16 @@ router.route("/register").post(
   registerUser
 );
 router.route("/login").post(loginUser);
-router.route("/logout").post(veryfyJwt, logoutUser);
+router.route("/logout").post(verifyJwt, logoutUser);
 router.route("/refresh-token").post(refreshAccessToken);
-router.route("/change-password").post(veryfyJwt, changeCurrentPassword);
-router.route("/current-user").get(veryfyJwt, getCurrentUser);
-router.route("/update-account").patch(veryfyJwt, updateAccountDetails);
-router.route("/avatar").patch(veryfyJwt, upload.single("avatar"), updateAvatar);
+router.route("/change-password").post(verifyJwt, changeCurrentPassword);
+router.route("/current-user").get(verifyJwt, getCurrentUser);
+router.route("/update-account").patch(verifyJwt, updateAccountDetails);
+router.route("/avatar").patch(verifyJwt, upload.single("avatar"), updateAvatar);
 router
   .route("/coverImage")
-  .patch(veryfyJwt, upload.single("coverImage"), updateCoverImage);
-router.route("/c/:userName").get(veryfyJwt, getChannelProfile);
-router.route("/history").get(veryfyJwt, getWatchHistory)
+  .patch(verifyJwt, upload.single("coverImage"), updateCoverImage);
+router.route("/c/:userName").get(verifyJwt, getChannelProfile);
+router.route("/history").get(verifyJwt, getWatchHistory);
 
 export default router;

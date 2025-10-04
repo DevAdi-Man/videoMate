@@ -5,10 +5,10 @@ import {
   updateComunity,
   deleteComunity,
 } from "../controllers/comunity.controller.js";
-import { veryfyJwt } from "../middleware/verifyJwt.js";
+import { verifyJwt } from "../middleware/verifyJwt.js";
 
 const router = Router();
-router.use(veryfyJwt); // Apply verifyJWT middleware to all routes in this file
+router.use(verifyJwt); // Apply verifyJWT middleware to all routes in this file
 
 router.route("/").post(createComunity);
 router.route("/user/:userId").get(getUserComunity);

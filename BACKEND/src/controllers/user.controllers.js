@@ -5,7 +5,6 @@ import { cloudinaryUpload } from "../utils/fileUpload.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { ApiResponse } from "../utils/ApiResponses.js";
-// genrateAccessAndRefreshToken
 const genrateAccessAndRefreshToken = async (userId) => {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
@@ -173,7 +172,7 @@ const refreshAccessToken = asyncHandler(async (req, res, next) => {
     if (incomingToken !== user.refreshtoken)
       return next(new ApiError(401, "Refresh token expired or used"));
 
-    const { accessToken, refreshToken } = await generateTokens(user._id);
+    const { accessToken, refreshToken } = await genrateAccessAndRefreshToken(user._id);
 
     const cookieOptions = {
       httpOnly: true,
@@ -256,7 +255,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
     return next(new ApiError("Avatar file is missing"));
   }
 
-  const avatar = cloudinaryUpload(avatarLocalPath);
+  const avatar = await cloudinaryUpload(avatarLocalPath);
 
   if (!avatar.url) {
     return next(new ApiError(400, "Error while uploading on avatar"));

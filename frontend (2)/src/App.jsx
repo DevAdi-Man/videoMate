@@ -18,7 +18,7 @@ function App() {
     const fetchUser = async () => {
       try {
         const response = await authService.getCurrentUser();
-
+        console.log("Resoponse in app : ",response)
         if (!isActive) return;
 
         if (response?.data) {
