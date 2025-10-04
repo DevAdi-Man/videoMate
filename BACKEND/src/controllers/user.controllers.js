@@ -5,22 +5,18 @@ import { cloudinaryUpload } from "../utils/fileUpload.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { ApiResponse } from "../utils/ApiResponses.js";
-
+// genrateAccessAndRefreshToken
 const genrateAccessAndRefreshToken = async (userId) => {
-  try {
-    const user = await User.findById(userId);
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
 
-    const accessToken = await user.createAccessToken();
-    const refreshtoken = await user.generateRefreshToken();
+  const accessToken = await user.createAccessToken();
+  const refreshToken = await user.generateRefreshToken();
 
-    user.refreshtoken = refreshtoken;
+  user.refreshtoken = refreshToken;
+  await user.save({ validateBeforeSave: false });
 
-    await user.save({ validateBeforeSave: false });
-
-    return { accessToken, refreshtoken };
-  } catch (error) {
-    return next(new ApiError(401, "somthing went wrong while genrating token"));
-  }
+  return { accessToken, refreshToken };
 };
 
 const registerUser = asyncHandler(async (req, res, next) => {
@@ -96,13 +92,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
     .json(new ApiResponse(200, createdUser, "user registered successfully"));
 });
 
+// LOGIN USER
 const loginUser = asyncHandler(async (req, res, next) => {
-  // get email and password from frontEnd
-  // check emal exist or not
-  // check password is correct or not
-  // if password is correct generate access token and refresh token and set in cookies
-  //res
-
   const { userName, email, password } = req.body;
 
   if (!userName && !email) {
@@ -114,112 +105,94 @@ const loginUser = asyncHandler(async (req, res, next) => {
   });
 
   if (!user) {
-    return next(new ApiError(404, "userName or email are not exist"));
+    return next(new ApiError(404, "userName or email not found"));
   }
 
-  const isPaswordMatch = await user.isCorrectPassword(password);
-
-  if (!isPaswordMatch) {
-    return next(new ApiError(401, "invalid credentials"));
+  const isPasswordMatch = await user.isCorrectPassword(password);
+  if (!isPasswordMatch) {
+    return next(new ApiError(401, "Invalid credentials"));
   }
 
-  const { refreshtoken, accessToken } = await genrateAccessAndRefreshToken(
-    user._id
-  );
+  const { accessToken, refreshToken } = await genrateAccessAndRefreshToken(user._id);
 
-  const loggedinUser = await User.findById(user._id).select(
+  const loggedInUser = await User.findById(user._id).select(
     "-password -refreshtoken"
   );
 
-  const option = {
+  const cookieOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  };
-
-  return res
-    .status(201)
-    .cookie("accessToken", accessToken, option)
-    .cookie("refreshToken", refreshtoken, option)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          user: loggedinUser,
-          accessToken,
-          refreshtoken,
-        },
-        "userlogin successfully"
-      )
-    );
-});
-
-const logoutUser = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user._id,
-    {
-      $unset: {
-        refreshtoken: 1,
-      },
-    },
-    {
-      new: true,
-    }
-  );
-
-  const options = {
-    httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   };
 
   return res
     .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User logged Out"));
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .json(
+      new ApiResponse(
+        200,
+        { user: loggedInUser, accessToken, refreshToken },
+        "User logged in successfully"
+      )
+    );
 });
-const refreshAccessToken = asyncHandler(async (req, res) => {
-  const incommingToken = req.cookies?.refreshtoken || req.body.refreshtoken;
 
-  if (!refreshtoken) {
-    return next(new ApiError(401, "unauthorized request"));
+// LOGOUT USER
+const logoutUser = asyncHandler(async (req, res) => {
+  if (req.user) {
+    await User.findByIdAndUpdate(req.user._id, { $unset: { refreshtoken: 1 } });
   }
 
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
+    .json(new ApiResponse(200, {}, "User logged out successfully"));
+});
+
+// REFRESH ACCESS TOKEN
+const refreshAccessToken = asyncHandler(async (req, res, next) => {
+  const incomingToken = req.cookies?.refreshToken || req.body.refreshToken;
+  if (!incomingToken) return next(new ApiError(401, "Unauthorized request"));
+
   try {
-    const decodedToken = jwt.verify(incommingToken, process.env.REFRESH_TOKEN);
+    const decodedToken = jwt.verify(incomingToken, process.env.REFRESH_TOKEN);
+    const user = await User.findById(decodedToken._id);
 
-    const user = await User.findById(decodedToken?._id);
+    if (!user) return next(new ApiError(401, "Invalid refresh token"));
+    if (incomingToken !== user.refreshtoken)
+      return next(new ApiError(401, "Refresh token expired or used"));
 
-    if (!user) {
-      return next(new ApiError(401, "Invalid refresh token"));
-    }
+    const { accessToken, refreshToken } = await generateTokens(user._id);
 
-    if (incommingToken !== user?.refreshtoken) {
-      return next(new ApiError(401, "refresh token is expaired or used"));
-    }
-
-    const options = {
+    const cookieOptions = {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     };
-
-    const { accessToken, newRefreshtoken } = genrateAccessAndRefreshToken(
-      user._id
-    );
 
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshtoken, options)
+      .cookie("accessToken", accessToken, cookieOptions)
+      .cookie("refreshToken", refreshToken, cookieOptions)
       .json(
         new ApiResponse(
           200,
-          { accessToken, refreshToken: newRefreshtoken },
-          "Access token refreshed"
+          { accessToken, refreshToken },
+          "Access token refreshed successfully"
         )
       );
-  } catch (error) {
-    return next(new ApiError(401, err.message || "Invalid  token"));
+  } catch (err) {
+    return next(new ApiError(401, err.message || "Invalid token"));
   }
 });
 const changeCurrentPassword = asyncHandler(async (req, res) => {
@@ -263,6 +236,10 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     },
     { new: true }
   ).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User updated successfully"));
 });
 
 const updateAvatar = asyncHandler(async (req, res) => {
@@ -363,7 +340,16 @@ const getChannelProfile = asyncHandler(async (req, res) => {
         isSubscribed: {
           $cond: {
             if: {
-              $in: [req.user._id, { $map: { input: "$subscribers", as: "s", in: "$$s.subscriber" } }],
+              $in: [
+                req.user._id,
+                {
+                  $map: {
+                    input: "$subscribers",
+                    as: "s",
+                    in: "$$s.subscriber",
+                  },
+                },
+              ],
             },
             then: true,
             else: false,
