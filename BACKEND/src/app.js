@@ -6,7 +6,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["https://videomate-production.up.railway.app/api/v1/","http://localhost:5173"],
+    origin: ["https://video-mate-two.vercel.app","http://localhost:5173"],
     credentials: true,
   })
 );
