@@ -113,7 +113,9 @@ const loginUser = asyncHandler(async (req, res, next) => {
     return next(new ApiError(401, "Invalid credentials"));
   }
 
-  const { accessToken, refreshToken } = await genrateAccessAndRefreshToken(user._id);
+  const { accessToken, refreshToken } = await genrateAccessAndRefreshToken(
+    user._id
+  );
 
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshtoken"
@@ -214,6 +216,10 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "your password is changed"));
 });
 const getCurrentUser = asyncHandler(async (req, res) => {
+  console.log(req.user);
+  if (!req.user) {
+    return next(new ApiError(404, "user not found"));
+  }
   return res
     .status(200)
     .json(new ApiResponse(200, req.user, "User fetched successfully"));
