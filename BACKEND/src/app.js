@@ -6,7 +6,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["*"],
+    origin: ["https://videomate-production.up.railway.app/api/v1/","http://localhost:5173"],
     credentials: true,
   })
 );
