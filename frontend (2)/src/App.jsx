@@ -4,7 +4,7 @@ import { Header, Loader } from "./components";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import authService from "./services/auth";
-import { login as authLogin, logout } from "./store/authSlice";
+import { login as authLogin, logout as authLogout } from "./store/authSlice";
 import MiniDrawer from "./components/Drawer";
 
 function App() {
@@ -13,31 +13,41 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let isMounted = true;
-    authService
-      .getCurrentUser()
-      .then((userData) => {
-        if (!isMounted) return;
-        if (userData) dispatch(authLogin(userData.data));
-        else {
-          dispatch(logout());
-          navigate("/login");
+    let isActive = true;
+
+    const fetchUser = async () => {
+      try {
+        const response = await authService.getCurrentUser();
+
+        if (!isActive) return;
+
+        if (response?.data) {
+          dispatch(authLogin(response.data));
+        } else {
+          dispatch(authLogout());
+          navigate("/login", { replace: true });
         }
-      })
-      .catch((error) => {
-        if (!isMounted) return;
-        console.error(error);
-        dispatch(logout());
-        navigate("/login");
-      })
-      .finally(() => isMounted && setLoading(false));
+      } catch (err) {
+        console.error("Auth Check Error:", err);
+        if (isActive) {
+          dispatch(authLogout());
+          navigate("/login", { replace: true });
+        }
+      } finally {
+        if (isActive) setLoading(false);
+      }
+    };
+
+    fetchUser();
 
     return () => {
-      isMounted = false;
+      isActive = false;
     };
   }, [dispatch, navigate]);
 
-  return !loading ? (
+  if (loading) return <Loader text="" />;
+
+  return (
     <div className="min-h-screen bg-background text-text">
       {/* Background Pattern */}
       <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-gray-900 -z-10">
@@ -48,7 +58,7 @@ function App() {
       {/* Header */}
       <Header />
 
-      {/* Main Content without flex */}
+      {/* Main Content */}
       <main className="pt-16">
         <MiniDrawer>
           <div className="w-full">
@@ -57,8 +67,6 @@ function App() {
         </MiniDrawer>
       </main>
     </div>
-  ) : (
-    <Loader text="" />
   );
 }
 

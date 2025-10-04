@@ -4,144 +4,167 @@ import { api } from "./axios.js";
 // import axios from "axios";
 
 export class AuthService {
-    async createAccount(data) {
-        try {
-            const userAccount = await api.post("/api/v1/users/register", data, {
-                headers: {
-                    "content-type": "multipart/form-data",
-                },
-            });
+  async createAccount(data) {
+    try {
+      const userAccount = await api.post("/api/v1/users/register", data, {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      });
 
-            if (userAccount) {
-                return this.Login({ email: data.email, password: data.password });
-            } else {
-                return userAccount;
-            }
-        } catch (error) {
-            console.log(error.response?.data || error.message);
-        }
+      if (userAccount) {
+        return this.Login({ email: data.email, password: data.password });
+      } else {
+        return userAccount;
+      }
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+    }
+  }
+
+  async Login(data) {
+    try {
+      const res = await api.post(`/api/v1/users/login`, data);
+
+      toast.success(res?.data?.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        // transition: Bounce,
+      });
+      return res;
+    } catch (error) {
+      toast.error(error.response?.data?.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        // transition: Bounce,
+      });
+    }
+  }
+
+  async getCurrentUser() {
+    try {
+      console.log("Getting current user...");
+      const res = await api({
+        url: `/api/v1/users/current-user`,
+        method: "get",
+        headers: {
+          "content-type": "application/json",
+        },
+        withCredentials: true,
+      });
+    //   console.log("res from getCurrentUser: ", res);
+      return res;
+    } catch (error) {
+      console.log("getCurrentUsser", error.message);
     }
 
-    async Login(data) {
-        try {
-            const res = await api.post(`/api/v1/users/login`, data);
-
-            toast.success(res?.data?.message, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-                // transition: Bounce,
-            });
-            return res;
-        } catch (error) {
-            toast.error(error.response?.data?.message, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-                // transition: Bounce,
-            });
-        }
+    return null;
+  }
+  async getWatchHistory() {
+    try {
+      const history = await api({
+        url: `/api/v1/users/history`,
+        method: "get",
+        headers: {
+          "content-type": "application/json",
+        },
+        withCredentials: true,
+      });
+      return history.data;
+    } catch (error) {
+      console.log("getWatchHistory", error);
     }
 
-    async getCurrentUser() {
-        try {
-            const res = await api({
-                url: `/api/v1/users/current-user`,
-                method: "get",
-                headers: {
-                    "content-type": "application/json",
-                },
-                withCredentials: true,
-            });
-            console.log("res from getCurrentUser: ", res)
-            return res;
-        } catch (error) {
-            console.log("getCurrentUsser", error.message);
-        }
+    return null;
+  }
 
-        return null;
-    }
-    async getWatchHistory() {
-        try {
-            const history = await api({
-                url: `/api/v1/users/history`,
-                method: "get",
-                headers: {
-                    "content-type": "application/json",
-                },
-                withCredentials: true,
-            });
-            return history.data;
-        } catch (error) {
-            console.log("getWatchHistory", error);
+  async logout() {
+    try {
+      const res = await api.post(
+        "/api/v1/users/logout",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
         }
+      );
 
-        return null;
-    }
+      toast.success(res?.data?.message || "Logged out successfully", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
 
-    async logout() {
-        try {
-            const res = await api({
-                url: `/api/v1/users/logout`,
-                method: "post",
-                headers: {
-                    "content-type": "application/json",
-                },
-                withCredentials: true,
-            });
-            toast.success(res?.data?.message, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-                // transition: Bounce,
-            });
-            return res;
-        } catch (error) {
-            console.log("logout", error);
-            toast.error(error.response?.data?.message, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-                // transition: Bounce,
-            });
-        }
-    }
+      return res?.data;
+    } catch (error) {
+      console.error("Logout Error:", error);
 
-    async getChannelDetails(userName) {
-        try {
-            const channel = await api({
-                url: `/api/v1/users/c/${userName}`,
-                method: "get",
-                headers: {
-                    "content-type": "application/json",
-                },
-                withCredentials: true,
-            });
-            return channel;
-        } catch (error) {
-            console.log(error);
-        }
+      // Extract safe error message
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong during logout.";
+
+      toast.error(message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+
+      // Re-throw error if you want upper layers to handle it
+      throw error;
     }
+  }
+
+  async getChannelDetails(userName) {
+    try {
+      const channel = await api({
+        url: `/api/v1/users/c/${userName}`,
+        method: "get",
+        headers: {
+          "content-type": "application/json",
+        },
+        withCredentials: true,
+      });
+      return channel;
+    } catch (error) {
+      console.log("getChannelDetails: ", error.message);
+      toast.error(error?.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  }
 }
 
 const authService = new AuthService();

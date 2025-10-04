@@ -16,17 +16,21 @@ export class VideoService {
 
       return response;
     } catch (error) {
-      console.log("get all video error", error)
-      // toast.error(res?.data?.message, {
-      //   position: "top-right",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "colored",
-      // });
+      console.log("get all video error", error?.message)
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong during getting all videos.";
+      toast.error(message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   }
 
@@ -55,6 +59,16 @@ export class VideoService {
       return response.data;
     } catch (error) {
       console.log("publish video", error);
+      toast.error(error?.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   }
 
