@@ -58,7 +58,7 @@ function App() {
       </main>
     </div>
   ) : (
-    <Loader text="Initializing YouTube Clone..." />
+    <Loader text="" />
   );
 }
 
